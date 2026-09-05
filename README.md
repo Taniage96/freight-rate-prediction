@@ -4,7 +4,11 @@ XGBoost-based freight rate prediction model with Optuna hyperparameter tuning an
 
 ---
 
-## Clone Repository
+## Download the Project
+
+Download the repository as a ZIP file from GitHub and extract it to a local folder.
+
+Alternatively, you may clone the repository:
 
 ```bash
 git clone https://github.com/Taniage96/freight-rate-prediction.git
@@ -33,6 +37,37 @@ Create and activate a virtual environment:
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+```
+
+---
+
+## Select the Jupyter Kernel
+
+After installing the dependencies, open `solution.ipynb` and select the Python interpreter associated with the virtual environment.
+
+### Windows
+
+```text
+.venv\Scripts\python.exe
+```
+
+### macOS / Linux
+
+```text
+.venv/bin/python
+```
+
+### VS Code
+
+1. Open `solution.ipynb`.
+2. Click **Select Kernel** in the upper-right corner.
+3. Choose the interpreter from the `.venv` environment.
+
+If the kernel is not available, run:
+
+```bash
+pip install ipykernel
+python -m ipykernel install --user --name freight-rate-prediction
 ```
 
 ---
@@ -67,61 +102,3 @@ The scorer validates both output files and generates:
 ```text
 scorer_results/candidate_december.png
 ```
-
----
-
-## Project Structure
-
-```text
-.
-├── solution.ipynb
-├── score.py
-├── requirements.txt
-├── README.md
-├── Final Report.pdf
-├── train-test.csv
-├── validation.csv
-├── validation-predictions-template.csv
-├── outputs/
-│   ├── validation_predictions.csv
-│   ├── december-chart-inputs.csv
-│   └── *.png
-└── scorer_results/
-    └── c*ndidate_december.png
-```
-
----
-
-## *odeling Approach
-
-| Step | Descrip*ion |
-|--------|-------------|
-| D*ta Split | Temporal split using th* last month of training data as a *old-out validation set |
-| Target *ransformation | `log(posted_rate +*1)` to reduce right skewness |
-| F*ature Engineering | Route-level ra*e-per-mile statistics, haversine d*stance, sinuosity, and geographic *egion features |
-| Model | XGBoost*optimized using a 75-trial Optuna *earch (TPE sampler) |
-| December F*recasting | Exponential Smoothing *ith trend and weekly seasonality |*
----
-
-## Validation Results
-
-| Met*ic | Baseline (Ridge) | XGBoost + *ptuna |
-|----------|----------|---*------|
-| RMSE | $733 | $640 |
-| M*E | $221 | $112 |
-| Median AE | — * $32 |
-| WMAPE | 9.3% | 4.7% |
-| R* | 0.77 | 0.83 |
-
-The remaining RM*E gap relative to MAE is primarily*driven by a small set of outlier l*ads (approximately 1.3% of observa*ions) exhibiting rate-per-mile val*es 4 to 6 times higher than their *oute averages.
-
----
-
-## Deliverabl*s
-
-- Source code and modeling note*ook (`solution.ipynb`)
-- `outputs/*alidation_predictions.csv`
-- `Fina* Report.pdf`
-- December forecast o*tputs and visualizations
-- Loom pr*sentation (submitted separately)
-`*
