@@ -1,51 +1,127 @@
 # Freight Rate Prediction
 
-XGBoost model for predicting freight load rates, with Optuna hyperparameter tuning and Exponential Smoothing for December market index forecasting.
+XGBoost-based freight rate prediction model with Optuna hyperparameter tuning and Exponential Smoothing for December market index forecasting.
+
+---
+
+## Clone Repository
+
+```bash
+git clone https://github.com/Taniage96/freight-rate-prediction.git
+cd freight-rate-prediction
+```
+
+---
 
 ## Setup
 
+### Windows
+
+Create and activate a virtual environment:
+
 ```bash
 python -m venv .venv
-.venv\Scripts\activate        # Windows
+.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Run
+### macOS / Linux
 
-Open `solution.ipynb` in VS Code or Jupyter and run all cells in order.
-
-The notebook produces:
-- `outputs/validation_predictions.csv` — 12,000 rate predictions
-- `outputs/december-chart-inputs.csv` — 31 daily December forecasts (Lexington → Fort Wayne)
-
-## Validate outputs
+Create and activate a virtual environment:
 
 ```bash
-python score.py \
-  --predictions outputs/validation_predictions.csv \
-  --december-predictions outputs/december-chart-inputs.csv
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-This validates both files and generates `outputs/scorer_results/candidate_december.png`.
+---
 
-## Approach
+## Run the Solution
 
-| Step | Detail |
-|---|---|
-| Split | Temporal — last month of training data as hold-out |
-| Target | log(posted_rate + 1) — reduces right skew |
-| Features | 30 features: route-level rate/mile stats, haversine distance, sinuosity, geographic region grid |
-| Model | XGBoost with 75-trial Optuna search (TPE sampler) |
-| December indices | Exponential Smoothing (trend + weekly seasonality) on historical market_index/quote_signal |
+Open `solution.ipynb` in VS Code or Jupyter Notebook and run all cells in order.
 
-## Results (hold-out — October 2025)
+The notebook generates:
 
-| Metric | Baseline (Ridge) | XGBoost + Optuna |
-|---|---|---|
+- `outputs/validation_predictions.csv` - Freight rate predictions for the 12,000 validation loads.
+- `outputs/december-chart-inputs.csv` - December market index forecasts used by the scoring script.
+
+---
+
+## Validate Outputs
+
+### Windows
+
+```bash
+python score.py --predictions outputs/validation_predictions.csv --december-predictions outputs/december-chart-inputs.csv
+```
+
+### macOS / Linux
+
+```bash
+python3 score.py --predictions outputs/validation_predictions.csv --december-predictions outputs/december-chart-inputs.csv
+```
+
+The scorer validates both output files and generates:
+
+```text
+scorer_results/candidate_december.png
+```
+
+---
+
+## Project Structure
+
+```text
+.
+├── solution.ipynb
+├── score.py
+├── requirements.txt
+├── README.md
+├── Final Report.pdf
+├── train-test.csv
+├── validation.csv
+├── validation-predictions-template.csv
+├── outputs/
+│   ├── validation_predictions.csv
+│   ├── december-chart-inputs.csv
+│   └── *.png
+└── scorer_results/
+    └── c*ndidate_december.png
+```
+
+---
+
+## *odeling Approach
+
+| Step | Descrip*ion |
+|--------|-------------|
+| D*ta Split | Temporal split using th* last month of training data as a *old-out validation set |
+| Target *ransformation | `log(posted_rate +*1)` to reduce right skewness |
+| F*ature Engineering | Route-level ra*e-per-mile statistics, haversine d*stance, sinuosity, and geographic *egion features |
+| Model | XGBoost*optimized using a 75-trial Optuna *earch (TPE sampler) |
+| December F*recasting | Exponential Smoothing *ith trend and weekly seasonality |*
+---
+
+## Validation Results
+
+| Met*ic | Baseline (Ridge) | XGBoost + *ptuna |
+|----------|----------|---*------|
 | RMSE | $733 | $640 |
-| MAE | $221 | $112 |
-| Median AE | — | $32 |
+| M*E | $221 | $112 |
+| Median AE | — * $32 |
 | WMAPE | 9.3% | 4.7% |
-| R² | 0.77 | 0.83 |
+| R* | 0.77 | 0.83 |
 
-The RMSE gap vs MAE is driven by 63 loads (1.3%) with anomalous rate-per-mile values (4–6× the route average), likely reflecting spot market surges or backhaul imbalances not captured by available features.
+The remaining RM*E gap relative to MAE is primarily*driven by a small set of outlier l*ads (approximately 1.3% of observa*ions) exhibiting rate-per-mile val*es 4 to 6 times higher than their *oute averages.
+
+---
+
+## Deliverabl*s
+
+- Source code and modeling note*ook (`solution.ipynb`)
+- `outputs/*alidation_predictions.csv`
+- `Fina* Report.pdf`
+- December forecast o*tputs and visualizations
+- Loom pr*sentation (submitted separately)
+`*
